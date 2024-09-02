@@ -6,10 +6,10 @@ const request = require("supertest");
 const app = require("../index");
 
 beforeAll(async () => {
-  await connectDB(); // Ensure connection before running tests
+  await connectDB();
 });
 afterAll(async () => {
-  await closeDB(); // Ensure connection is closed after all tests
+  await closeDB();
 });
 beforeEach(async () => {
   await Customer.deleteMany({});
@@ -201,10 +201,9 @@ describe("Apply Discount API", () => {
       .send({ customerId: customer._id, discountCode: "INVALID" });
 
     expect(response.statusCode).toBe(200);
-    expect(response.body.total).toBe(5); // No discount applied
+    expect(response.body.total).toBe(5);
     expect(response.body.message).toBe("Discount applied successfully!");
 
-    // Clean up
     await Customer.findByIdAndDelete(customer._id);
     await Product.findByIdAndDelete(product._id);
   });
@@ -241,7 +240,7 @@ describe("Checkout API", () => {
 
     const response = await request(app).post("/customer/checkout").send({
       customerId: customer._id,
-      discountCode: "DISCOUNT10", // assuming this brings total to exactly 10
+      discountCode: "DISCOUNT10",
       paymentMethod: "Cash",
     });
 
@@ -250,7 +249,6 @@ describe("Checkout API", () => {
       "You must pay with a Credit Card for totals over €10"
     );
 
-    // Clean up
     await Customer.findByIdAndDelete(customer._id);
     await Product.findByIdAndDelete(product._id);
   });

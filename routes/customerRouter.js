@@ -68,7 +68,6 @@ router.post("/cart/add", async (req, res) => {
 });
 
 // Get cart details by customerId
-// Get cart details by customerId
 router.get("/cart", async (req, res) => {
   const { customerId } = req.query;
 
@@ -175,14 +174,12 @@ router.post("/checkout", async (req, res) => {
         .send("You must pay with a Credit Card for totals over €10");
     }
 
-    // Update customer record
     customer.total = total;
     customer.discount = discountCode === "DISCOUNT10" ? 2 : 0;
     customer.paymentMethod = paymentMethod;
 
     await customer.save();
 
-    // Respond with success message and total
     res.status(200).json({
       message: "Order placed successfully!",
       total: customer.total,
@@ -211,25 +208,21 @@ router.post("/apply-discount", async (req, res) => {
       return res.status(404).send("Customer not found");
     }
 
-    // Calculate total before discount
     let total = customer.cart.reduce(
       (acc, item) => acc + item.drinkId.price * item.quantity,
       0
     );
 
-    // Apply discount
     if (discountCode === "DISCOUNT10") {
       total -= 2; // Apply a €2 discount
     }
     total = total < 0 ? 0 : total;
 
-    // Update customer record
     customer.total = total;
     customer.discount = discountCode === "DISCOUNT10" ? 2 : 0;
 
     await customer.save();
 
-    // Respond with the updated total
     res.json({
       total: customer.total,
       message: "Discount applied successfully!",
